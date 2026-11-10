@@ -7,7 +7,7 @@ import styles from './App.module.css';
 const API = 'http://localhost:3000/api';
 
 export default function App() {
-  const [form, setForm] = useState({ code: '', name: '', studentId: '' });
+  const [form, setForm] = useState({ code: '', name: '' });
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -34,7 +34,7 @@ export default function App() {
     e.preventDefault();
     setError('');
 
-    if (!form.code.trim() || !form.name.trim() || !form.studentId.trim()) {
+    if (!form.code.trim() || !form.name.trim()) {
       return setError('Fill in all fields');
     }
 
@@ -47,7 +47,6 @@ export default function App() {
         body: JSON.stringify({
           code,
           name: form.name.trim(),
-          studentId: form.studentId.trim(),
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -56,7 +55,6 @@ export default function App() {
       const joined = {
         code,
         name: form.name.trim(),
-        studentId: form.studentId.trim(),
         token: data.token,
       };
       await chrome.storage.local.set({ session: joined });
@@ -69,7 +67,7 @@ export default function App() {
   const handleLeave = async () => {
     await chrome.storage.local.remove('session');
     setSession(null);
-    setForm({ code: '', name: '', studentId: '' });
+    setForm({ code: '', name: '' });
   };
 
   if (loading) return null;
@@ -87,8 +85,6 @@ export default function App() {
 
         <p className={styles.meta}>
           Name: <strong>{session.name}</strong>
-          <br />
-          ID: <strong>{session.studentId}</strong>
         </p>
 
         <Button onClick={handleLeave} icon={<SignOut weight="bold" size={14} />}>
@@ -105,8 +101,8 @@ export default function App() {
 
       <form className={styles.form} onSubmit={handleJoin} noValidate>
         <Input id="code" name="code" label="Session Code" placeholder="ABC123" value={form.code} onChange={handleChange} />
-        <Input id="name" name="name" label="Full Name" placeholder="Juan Dela Cruz" value={form.name} onChange={handleChange} />
-        <Input id="studentId" name="studentId" label="Student ID" placeholder="2024-00123" value={form.studentId} onChange={handleChange} error={error} />
+        <Input id="name" name="name" label="Full Name" placeholder="Juan Dela Cruz" value={form.name} onChange={handleChange} error={error} />
+        {error && <p className={styles.error}>{error}</p>}
 
         <Button type="submit" icon={<ArrowRight weight="bold" size={14} />}>
           Join
